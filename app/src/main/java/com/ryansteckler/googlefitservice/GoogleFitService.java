@@ -2,6 +2,7 @@ package com.ryansteckler.googlefitservice;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -42,6 +43,8 @@ public class GoogleFitService extends IntentService {
     public static final String FIT_EXTRA_CONNECTION_MESSAGE = "fitFirstConnection";
     public static final String FIT_EXTRA_NOTIFY_FAILED_STATUS_CODE = "fitExtraFailedStatusCode";
     public static final String FIT_EXTRA_NOTIFY_FAILED_INTENT = "fitExtraFailedIntent";
+
+    private static int REQUEST_CODE_RESOLVE_ERR = 1000;
 
     @Override
     public void onDestroy() {
@@ -144,7 +147,7 @@ public class GoogleFitService extends IntentService {
     private void buildFitnessClient() {
         // Create the Google API Client
         mGoogleApiFitnessClient = new GoogleApiClient.Builder(this)
-                .addApi(Fitness.API)
+                .addApi(Fitness.HISTORY_API)
                 .addScope(new Scope(Scopes.FITNESS_BODY_READ_WRITE))
                 .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
                 .addScope(new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
@@ -178,6 +181,16 @@ public class GoogleFitService extends IntentService {
                             // Called whenever the API client fails to connect.
                             @Override
                             public void onConnectionFailed(ConnectionResult result) {
+                                Log.d("Dan", "onConnectionFailed " + result.toString());
+                                if (result.hasResolution()) {
+                                    Log.d("Dan", "has resolution");
+                                    try {
+                                        // !!!
+                                        result.startResolutionForResult(MainActivity.activity, REQUEST_CODE_RESOLVE_ERR);
+                                    } catch (IntentSender.SendIntentException e) {
+                                        Log.d("Dan", "SendIntendException" + e.toString());
+                                    }
+                                }
                                 mTryingToConnect = false;
                                 notifyUiFailedConnection(result);
                             }

@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +20,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.fitness.FitnessStatusCodes;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     public final static String TAG = "GoogleFitService";
     private ConnectionResult mFitResultResolution;
@@ -30,12 +30,17 @@ public class MainActivity extends ActionBarActivity {
     private Button mConnectButton;
     private Button mGetStepsButton;
 
+    public static Activity activity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        activity = this;
+
         setContentView(R.layout.activity_main);
 
-        mConnectButton = (Button)findViewById(R.id.buttonConnectToFit);
+        mConnectButton = findViewById(R.id.buttonConnectToFit);
         mConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        mGetStepsButton = (Button)findViewById(R.id.buttonGetSteps);
+        mGetStepsButton = findViewById(R.id.buttonGetSteps);
         mGetStepsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
